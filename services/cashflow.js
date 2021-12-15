@@ -2,20 +2,33 @@ const _ = require("lodash");
 const { Types } = require("mongoose");
 
 class CashFlowService {
-  constructor({ cashFlowModel }) {
+  constructor({ cashFlowModel, categoryModel }) {
     this.cashFlowModel = cashFlowModel;
+    this.categoryModel = categoryModel;
   }
 
   async getByUser(userId) {
-    return this.cashFlowModel
-      .find({
-        user_id: { $in: [Types.ObjectId(userId), null] },
-      })
-      .sort([
-        ["user_id", -1],
-        ["type", 1],
-        ["name", 1],
-      ]);
+    const pipeline = [
+      { $match: { user_id: Types.ObjectId(userId) } },
+      {
+        $lookup: {
+          from: this.categoryModel.collection.name,
+          localField: "category_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: { path: "$category" } },
+      {
+        $addFields: {
+          category_name: "$category.name",
+          category_type: "$category.type",
+          category: "$$REMOVE",
+        },
+      },
+      { $sort: { created_at: -1, name: 1 } },
+    ];
+    return this.cashFlowModel.aggregate(pipeline).allowDiskUse(true);
   }
 
   async getById({ id, user_id }) {

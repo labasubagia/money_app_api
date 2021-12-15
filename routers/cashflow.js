@@ -2,11 +2,15 @@ const { Router } = require("express");
 const CashFlowController = require("../controllers/cashflow");
 const CashFlowService = require("../services/cashflow");
 const CashFlow = require("../models/cashflow");
+const Category = require("../models/category");
 
 const cashFlowRouter = Router();
 
 const controller = new CashFlowController({
-  cashFlowService: new CashFlowService({ cashFlowModel: CashFlow }),
+  cashFlowService: new CashFlowService({
+    cashFlowModel: CashFlow,
+    categoryModel: Category,
+  }),
 });
 
 cashFlowRouter.get("/", ...controller.getByUser());
