@@ -2,9 +2,9 @@ const { checkSchema } = require("express-validator");
 const ValidationHelper = require("../helpers/validation");
 const CategoryConfig = require("../config/category");
 
-class CategoryController {
-  constructor({ categoryService }) {
-    this.categoryService = categoryService;
+class CashFlowController {
+  constructor({ cashFlowService }) {
+    this.cashFlowService = cashFlowService;
   }
 
   getByUser() {
@@ -14,7 +14,7 @@ class CategoryController {
   getByUserHandler() {
     return async (req, res, next) => {
       const userId = req?.user?._id;
-      const data = await this.categoryService.getByUser(userId);
+      const data = await this.cashFlowService.getByUser(userId);
       return res.json({ data });
     };
   }
@@ -32,7 +32,7 @@ class CategoryController {
   getByIdHandler() {
     return async (req, res, next) => {
       const { id } = req.params;
-      const data = await this.categoryService.getById({
+      const data = await this.cashFlowService.getById({
         user_id: req?.user?._id,
         id,
       });
@@ -48,13 +48,9 @@ class CategoryController {
     return ValidationHelper.validate(
       checkSchema({
         name: { exists: { errorMessage: "name required" } },
-        type: {
-          exists: { errorMessage: "type required" },
-          isIn: {
-            options: [CategoryConfig.TYPES],
-            errorMessage: `type only in ${CategoryConfig.TYPES.join(", ")}`,
-          },
-        },
+        category_id: { exists: { errorMessage: "category_id required" } },
+        amount: { exists: { errorMessage: "amount required" } },
+        date: { exists: { errorMessage: "date required" } },
       })
     );
   }
@@ -62,13 +58,16 @@ class CategoryController {
   createHandler() {
     return async (req, res, next) => {
       try {
-        const { name, type } = req.body;
-        const data = await this.categoryService.create({
+        const { name, category_id, amount, note, date } = req.body;
+        const data = await this.cashFlowService.create({
           user_id: req?.user?._id,
           name,
-          type,
+          category_id,
+          amount,
+          note,
+          date,
         });
-        return res.status(201).json({ data, message: "Category created" });
+        return res.status(201).json({ data, message: "Cash Flow created" });
       } catch (error) {
         next(error);
       }
@@ -83,13 +82,9 @@ class CategoryController {
     return ValidationHelper.validate(
       checkSchema({
         name: { optional: { options: { nullable: true } } },
-        type: {
-          optional: { options: { nullable: true } },
-          isIn: {
-            options: [CategoryConfig.TYPES],
-            errorMessage: `type only in ${CategoryConfig.TYPES.join(", ")}`,
-          },
-        },
+        category_id: { optional: { options: { nullable: true } } },
+        amount: { optional: { options: { nullable: true } } },
+        date: { optional: { options: { nullable: true } } },
       })
     );
   }
@@ -98,14 +93,17 @@ class CategoryController {
     return async (req, res, next) => {
       try {
         const { id } = req.params;
-        const { name, type } = req.body;
-        const data = await this.categoryService.update({
+        const { name, category_id, amount, note, date } = req.body;
+        const data = await this.cashFlowService.update({
           id,
           user_id: req?.user?._id,
+          category_id,
           name,
-          type,
+          amount,
+          note,
+          date,
         });
-        return res.status(200).json({ data, message: "Category updated" });
+        return res.status(200).json({ data, message: "Cash Flow updated" });
       } catch (error) {
         next(error);
       }
@@ -126,13 +124,13 @@ class CategoryController {
     return async (req, res, next) => {
       try {
         const { id } = req.params;
-        const data = await this.categoryService.delete({
+        const data = await this.cashFlowService.delete({
           user_id: req?.user?._id,
           id,
         });
         return res.status(data ? 200 : 404).json({
           data,
-          message: data ? "Category deleted" : "Category not found",
+          message: data ? "Cash Flow deleted" : "Cash Flow not found",
         });
       } catch (error) {
         next(error);
@@ -141,4 +139,4 @@ class CategoryController {
   }
 }
 
-module.exports = CategoryController;
+module.exports = CashFlowController;

@@ -1,6 +1,5 @@
 const _ = require("lodash");
 const { Types } = require("mongoose");
-const Category = require("../models/category");
 
 class CategoryService {
   constructor({ categoryModel }) {
