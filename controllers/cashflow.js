@@ -1,6 +1,5 @@
 const { checkSchema } = require("express-validator");
 const ValidationHelper = require("../helpers/validation");
-const CategoryConfig = require("../config/category");
 
 class CashFlowController {
   constructor({ cashFlowService }) {
