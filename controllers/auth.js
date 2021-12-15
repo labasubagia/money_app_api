@@ -6,18 +6,16 @@ class AuthController {
     this.userService = userService;
   }
 
+  login() {
+    return [this.loginValidator, this.loginHandler];
+  }
   loginValidator = ValidationHelper.validate(
     checkSchema({
-      email: {
-        exists: { errorMessage: "email required" },
-      },
-      password: {
-        exists: { errorMessage: "password required" },
-      },
+      email: { exists: { errorMessage: "email required" } },
+      password: { exists: { errorMessage: "password required" } },
     })
   );
-
-  async login(req, res, next) {
+  async loginHandler(req, res, next) {
     try {
       const { email, password } = req.body;
       const token = await this.userService.login({ email, password });
@@ -27,14 +25,14 @@ class AuthController {
     }
   }
 
+  register() {
+    return [this.registerValidator, this.registerHandler];
+  }
+
   registerValidator = ValidationHelper.validate(
     checkSchema({
-      email: {
-        exists: { errorMessage: "email required" },
-      },
-      name: {
-        exists: { errorMessage: "name required" },
-      },
+      email: { exists: { errorMessage: "email required" } },
+      name: { exists: { errorMessage: "name required" } },
       password: {
         exists: { errorMessage: "password required" },
         isLength: {
@@ -45,7 +43,7 @@ class AuthController {
     })
   );
 
-  async register(req, res, next) {
+  async registerHandler(req, res, next) {
     try {
       const { email, name, password } = req.body;
       const data = await this.userService.register({ email, name, password });

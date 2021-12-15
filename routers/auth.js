@@ -9,11 +9,7 @@ const controller = new AuthController({
   userService: new UserService({ userModel: User }),
 });
 
-authRouter.post("/login", controller.loginValidator, (req, res, next) => {
-  return controller.login(req, res, next);
-});
-authRouter.post("/register", controller.registerValidator, (req, res, next) => {
-  return controller.register(req, res, next);
-});
+authRouter.post("/login", ...controller.login());
+authRouter.post("/register", ...controller.register());
 
 module.exports = authRouter;
