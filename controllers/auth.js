@@ -9,12 +9,14 @@ class AuthController {
   login() {
     return [this.loginValidator, this.loginHandler];
   }
+
   loginValidator = ValidationHelper.validate(
     checkSchema({
       email: { exists: { errorMessage: "email required" } },
       password: { exists: { errorMessage: "password required" } },
     })
   );
+
   async loginHandler(req, res, next) {
     try {
       const { email, password } = req.body;
