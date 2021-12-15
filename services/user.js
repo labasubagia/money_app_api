@@ -1,3 +1,4 @@
+const { Types } = require("mongoose");
 const BcryptHelper = require("../helpers/bcrypt");
 const JwtHelper = require("../helpers/jwt");
 
@@ -23,6 +24,27 @@ class UserService {
     let user = await this.userModel.create({ email, name, password });
     user = user.toObject();
     delete user.password;
+    return user;
+  }
+
+  async update({ id, email, name, password }) {
+    let user = await this.userModel.findByIdAndUpdate(
+      id,
+      { email, name, password },
+      { new: true }
+    );
+    if (!user) return null;
+    user = user.toObject();
+    delete user.password;
+    return user;
+  }
+
+  async findByEmail(email, excludedId = null) {
+    const query = { email };
+    if (excludedId) {
+      query._id = { $ne: Types.ObjectId(excludedId) };
+    }
+    const user = await this.userModel.findOne(query);
     return user;
   }
 }
