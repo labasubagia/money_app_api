@@ -10,8 +10,8 @@ class UserController {
     return [this.updateValidator(), this.updateHandler()];
   }
 
-  updateValidator = () =>
-    ValidationHelper.validate(
+  updateValidator() {
+    return ValidationHelper.validate(
       checkSchema({
         id: { exists: { errorMessage: "id required" } },
         email: {
@@ -37,6 +37,7 @@ class UserController {
         },
       })
     );
+  }
 
   updateHandler() {
     return async (req, res, next) => {

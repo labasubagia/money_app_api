@@ -10,8 +10,8 @@ class AuthController {
     return [this.loginValidator(), this.loginHandler()];
   }
 
-  loginValidator = () =>
-    ValidationHelper.validate(
+  loginValidator() {
+    return ValidationHelper.validate(
       checkSchema({
         email: {
           exists: { errorMessage: "email required" },
@@ -20,6 +20,7 @@ class AuthController {
         password: { exists: { errorMessage: "password required" } },
       })
     );
+  }
 
   loginHandler() {
     return async (req, res, next) => {
@@ -37,8 +38,8 @@ class AuthController {
     return [this.registerValidator(), this.registerHandler()];
   }
 
-  registerValidator = () =>
-    ValidationHelper.validate(
+  registerValidator() {
+    return ValidationHelper.validate(
       checkSchema({
         email: {
           exists: { errorMessage: "email required" },
@@ -60,6 +61,7 @@ class AuthController {
         },
       })
     );
+  }
 
   registerHandler() {
     return async (req, res, next) => {
