@@ -16,7 +16,6 @@ class CashFlowService {
   }) {
     const startDate = moment(start_date).startOf("day").toDate();
     const endDate = moment(end_date).endOf("day").toDate();
-    console.log({ startDate, endDate });
     const pipeline = [
       { $match: { user_id: Types.ObjectId(user_id) } },
       {
