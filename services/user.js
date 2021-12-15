@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const { Types } = require("mongoose");
 const BcryptHelper = require("../helpers/bcrypt");
 const JwtHelper = require("../helpers/jwt");
@@ -28,14 +29,11 @@ class UserService {
   }
 
   async update({ id, email, name, password }) {
-    let user = await this.userModel.findByIdAndUpdate(
-      id,
-      { email, name, password },
-      { new: true }
-    );
-    if (!user) return null;
-    user = user.toObject();
-    delete user.password;
+    password = password ? BcryptHelper.make(password) : null;
+    const payload = _.pickBy({ email, name, password }, _.identity);
+    const user = await this.userModel.findByIdAndUpdate(id, payload, {
+      new: true,
+    });
     return user;
   }
 
