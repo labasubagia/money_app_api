@@ -49,7 +49,7 @@ class CashFlowService {
               $match: {
                 $expr: {
                   $and: [
-                    { $gt: ["$date", startDate] },
+                    { $gte: ["$date", startDate] },
                     { $lte: ["$date", endDate] },
                   ],
                 },
@@ -61,7 +61,7 @@ class CashFlowService {
               $match: {
                 $expr: {
                   $and: [
-                    { $gt: ["$date", startDate] },
+                    { $gte: ["$date", startDate] },
                     { $lte: ["$date", endDate] },
                     { $eq: ["$category_type", CategoryConfig.EXPENSE] },
                   ],
@@ -74,7 +74,7 @@ class CashFlowService {
               $match: {
                 $expr: {
                   $and: [
-                    { $gt: ["$date", startDate] },
+                    { $gte: ["$date", startDate] },
                     { $lte: ["$date", endDate] },
                     { $eq: ["$category_type", CategoryConfig.INCOME] },
                   ],
