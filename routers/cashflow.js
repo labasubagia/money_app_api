@@ -14,6 +14,7 @@ const controller = new CashFlowController({
 });
 
 cashFlowRouter.get("/", ...controller.getByUser());
+cashFlowRouter.get("/summary", ...controller.getSummary());
 cashFlowRouter.get("/:id", ...controller.getById());
 cashFlowRouter.post("/", ...controller.create());
 cashFlowRouter.post("/:id", ...controller.update());

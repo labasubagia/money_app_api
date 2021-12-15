@@ -7,6 +7,31 @@ class CashFlowController {
     this.cashFlowService = cashFlowService;
   }
 
+  getSummary() {
+    return [this.getSummaryValidator(), this.getSummaryHandler()];
+  }
+
+  getSummaryValidator() {
+    return ValidationHelper.validate(
+      checkSchema({
+        start_date: { optional: { options: { nullable: true } } },
+        end_date: { optional: { options: { nullable: true } } },
+      })
+    );
+  }
+
+  getSummaryHandler() {
+    return async (req, res, next) => {
+      const { start_date, end_date } = req.query;
+      const data = await this.cashFlowService.getSummary({
+        user_id: req?.user?._id,
+        start_date,
+        end_date,
+      });
+      return res.json({ data });
+    };
+  }
+
   getByUser() {
     return [this.getByUserHandler()];
   }
