@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-const BcryptHelper = require("../../money_app_backend/helpers/bcrypt");
+const BcryptHelper = require("../helpers/bcrypt");
 
 const schema = new Schema(
   {
