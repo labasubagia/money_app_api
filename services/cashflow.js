@@ -50,9 +50,9 @@ class CashFlowService {
 
   async update({ id, user_id, category_id, name, amount, note, date }) {
     const query = { _id: Types.ObjectId(id), user_id: Types.ObjectId(user_id) };
-    const payload = _.pickBy(
+    const payload = _.omitBy(
       { category_id, name, amount, note, date },
-      _.identity
+      _.isUndefined
     );
     return this.cashFlowModel.findOneAndUpdate(query, payload, { new: true });
   }

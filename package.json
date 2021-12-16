@@ -1,5 +1,5 @@
 {
-  "name": "money_app_backend",
+  "name": "money_app_api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -23,5 +23,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
+  },
+  "engines": {
+    "node": "15.x"
   }
 }

@@ -32,7 +32,7 @@ class CategoryService {
 
   async update({ id, user_id, name, type }) {
     const query = { _id: Types.ObjectId(id), user_id: Types.ObjectId(user_id) };
-    const payload = _.pickBy({ name, type }, _.identity);
+    const payload = _.omitBy({ name, type }, _.isUndefined);
     return this.categoryModel.findOneAndUpdate(query, payload, { new: true });
   }
 
