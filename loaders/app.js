@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
+const compression = require("compression");
 const Env = require("../config/env");
 const router = require("../routers");
 
@@ -7,9 +9,11 @@ class AppLoader {
   constructor() {
     this.port = Env.PORT;
     this.app = express();
+    this.app.use(cors());
+    this.app.use(helmet());
+    this.app.use(compression());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(cors());
     this.app.use(router);
     this.app.use(this.errorHandler);
   }
