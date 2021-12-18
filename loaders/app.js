@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const Env = require("../config/env");
 const router = require("../routers");
 
@@ -8,6 +9,7 @@ class AppLoader {
     this.app = express();
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(cors());
     this.app.use(router);
     this.app.use(this.errorHandler);
   }
