@@ -30,7 +30,7 @@ class UserService {
 
   async update({ id, email, name, password }) {
     password = password ? BcryptHelper.make(password) : null;
-    const payload = _.omitBy({ email, name, password }, _.isUndefined);
+    const payload = _.omitBy({ email, name, password }, _.isNil);
     const user = await this.userModel.findByIdAndUpdate(id, payload, {
       new: true,
     });

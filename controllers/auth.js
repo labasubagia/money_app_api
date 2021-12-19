@@ -14,10 +14,10 @@ class AuthController {
     return ValidationHelper.validate(
       checkSchema({
         email: {
-          exists: { errorMessage: "email required" },
+          notEmpty: { errorMessage: "email required" },
           isEmail: { errorMessage: "invalid email" },
         },
-        password: { exists: { errorMessage: "password required" } },
+        password: { notEmpty: { errorMessage: "password required" } },
       })
     );
   }
@@ -27,7 +27,7 @@ class AuthController {
       try {
         const { email, password } = req.body;
         const token = await this.userService.login({ email, password });
-        return res.json({ token, message: "Logged Login" });
+        return res.json({ token, message: "Login Success" });
       } catch (error) {
         next(error);
       }
@@ -42,7 +42,7 @@ class AuthController {
     return ValidationHelper.validate(
       checkSchema({
         email: {
-          exists: { errorMessage: "email required" },
+          notEmpty: { errorMessage: "email required" },
           isEmail: { errorMessage: "invalid email" },
           custom: {
             options: async (value) => {
@@ -51,9 +51,9 @@ class AuthController {
             },
           },
         },
-        name: { exists: { errorMessage: "name required" } },
+        name: { notEmpty: { errorMessage: "name required" } },
         password: {
-          exists: { errorMessage: "password required" },
+          notEmpty: { errorMessage: "password required" },
           isLength: {
             options: { min: 8 },
             errorMessage: "minimal password length 8",

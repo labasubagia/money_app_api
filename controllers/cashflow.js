@@ -49,7 +49,7 @@ class CashFlowController {
 
   getByIdValidator() {
     return ValidationHelper.validate(
-      checkSchema({ id: { exists: { errorMessage: "id required" } } })
+      checkSchema({ id: { notEmpty: { errorMessage: "id required" } } })
     );
   }
 
@@ -71,10 +71,10 @@ class CashFlowController {
   createValidator() {
     return ValidationHelper.validate(
       checkSchema({
-        name: { exists: { errorMessage: "name required" } },
-        category_id: { exists: { errorMessage: "category_id required" } },
-        amount: { exists: { errorMessage: "amount required" } },
-        date: { exists: { errorMessage: "date required" } },
+        name: { notEmpty: { errorMessage: "name required" } },
+        category_id: { notEmpty: { errorMessage: "category required" } },
+        amount: { notEmpty: { errorMessage: "amount required" } },
+        date: { notEmpty: { errorMessage: "date required" } },
       })
     );
   }
@@ -140,7 +140,7 @@ class CashFlowController {
 
   deleteValidator() {
     return ValidationHelper.validate(
-      checkSchema({ id: { exists: { errorMessage: "id required" } } })
+      checkSchema({ id: { notEmpty: { errorMessage: "id required" } } })
     );
   }
 

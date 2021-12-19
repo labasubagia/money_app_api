@@ -25,7 +25,7 @@ class CategoryController {
 
   getByIdValidator() {
     return ValidationHelper.validate(
-      checkSchema({ id: { exists: { errorMessage: "id required" } } })
+      checkSchema({ id: { notEmpty: { errorMessage: "id required" } } })
     );
   }
 
@@ -47,9 +47,9 @@ class CategoryController {
   createValidator() {
     return ValidationHelper.validate(
       checkSchema({
-        name: { exists: { errorMessage: "name required" } },
+        name: { notEmpty: { errorMessage: "name required" } },
         type: {
-          exists: { errorMessage: "type required" },
+          notEmpty: { errorMessage: "type required" },
           isIn: {
             options: [CategoryConfig.TYPES],
             errorMessage: `type only in ${CategoryConfig.TYPES.join(", ")}`,
