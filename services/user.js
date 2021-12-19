@@ -37,6 +37,10 @@ class UserService {
     return user;
   }
 
+  async getById(id) {
+    return this.userModel.findById(id);
+  }
+
   async findByEmail(email, excludedId = null) {
     const query = { email };
     if (excludedId) {

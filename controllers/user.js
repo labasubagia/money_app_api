@@ -6,6 +6,24 @@ class UserController {
     this.userService = userService;
   }
 
+  getProfile() {
+    return [this.getProfileHandler()];
+  }
+
+  getProfileHandler() {
+    return async (req, res, next) => {
+      try {
+        const id = req?.user?._id;
+        const data = await this.userService.getById(id);
+        return res
+          .status(data ? 200 : 404)
+          .json({ data, message: data ? "User found" : "User not found" });
+      } catch (error) {
+        next(error);
+      }
+    };
+  }
+
   update() {
     return [this.updateValidator(), this.updateHandler()];
   }

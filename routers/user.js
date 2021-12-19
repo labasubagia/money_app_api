@@ -9,6 +9,7 @@ const controller = new UserController({
   userService: new UserService({ userModel: User }),
 });
 
+userRouter.get("/", ...controller.getProfile());
 userRouter.post("/", ...controller.update());
 
 module.exports = userRouter;
