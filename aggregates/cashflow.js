@@ -117,7 +117,7 @@ const CashFlowPipeline = {
           category: "$$REMOVE",
         },
       },
-      { $sort: { created_at: -1, name: 1 } },
+      { $sort: { date: -1, name: 1 } },
     ];
   },
 };
