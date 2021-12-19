@@ -1,9 +1,11 @@
 const _ = require("lodash");
 const { Types } = require("mongoose");
+const CashFlow = require("../models/cashflow");
 
 class CategoryService {
-  constructor({ categoryModel }) {
+  constructor({ categoryModel, cashFlowModel }) {
     this.categoryModel = categoryModel;
+    this.cashFlowModel = cashFlowModel;
   }
 
   async getByUser(userId) {
@@ -38,6 +40,16 @@ class CategoryService {
 
   async delete({ id, user_id }) {
     const query = { _id: Types.ObjectId(id), user_id: Types.ObjectId(user_id) };
+    const cashFlowCount = await this.cashFlowModel
+      .find({
+        category_id: query._id,
+        user_id: query.user_id,
+      })
+      .countDocuments();
+    if (cashFlowCount)
+      throw new Error(
+        `Cannot delete category cause it has ${cashFlowCount} cashflow`
+      );
     return this.categoryModel.findOneAndDelete(query, { new: true });
   }
 }
