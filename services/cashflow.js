@@ -1,6 +1,7 @@
 const _ = require("lodash");
-const { Types } = require("mongoose");
+const { Types, startSession } = require("mongoose");
 const CashFlowPipeline = require("../aggregates/cashflow");
+const FileHelper = require("../helpers/file");
 
 class CashFlowService {
   constructor({ cashFlowModel, categoryModel }) {
@@ -37,24 +38,68 @@ class CashFlowService {
     return this.cashFlowModel.findOne(query);
   }
 
-  async create({ user_id, category_id, name, amount, note, date }) {
-    return this.cashFlowModel.create({
-      user_id,
-      category_id,
-      name,
-      amount,
-      note,
-      date,
-    });
+  async create({ user_id, category_id, name, amount, note, date, receipt }) {
+    const session = await startSession();
+    try {
+      session.startTransaction();
+      let receipt_url = undefined;
+      if (receipt) receipt_url = await FileHelper.uploadImage(receipt);
+
+      const cashflow = this.cashFlowModel.create({
+        user_id,
+        category_id,
+        name,
+        amount,
+        note,
+        date,
+        receipt_url,
+      });
+      await session.commitTransaction();
+      await session.endSession();
+      return cashflow;
+    } catch (error) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw error;
+    }
   }
 
-  async update({ id, user_id, category_id, name, amount, note, date }) {
-    const query = { _id: Types.ObjectId(id), user_id: Types.ObjectId(user_id) };
-    const payload = _.omitBy(
-      { category_id, name, amount, note, date },
-      _.isUndefined
-    );
-    return this.cashFlowModel.findOneAndUpdate(query, payload, { new: true });
+  async update({
+    id,
+    user_id,
+    category_id,
+    name,
+    amount,
+    note,
+    date,
+    receipt,
+  }) {
+    const session = await startSession();
+    try {
+      session.startTransaction();
+
+      let receipt_url = undefined;
+      if (receipt) receipt_url = await FileHelper.uploadImage(receipt);
+
+      const query = {
+        _id: Types.ObjectId(id),
+        user_id: Types.ObjectId(user_id),
+      };
+      let payload = { category_id, name, amount, note, date };
+      if (receipt_url) payload.receipt_url = receipt_url;
+      payload = _.omitBy(payload, _.isUndefined);
+
+      const cashflow = this.cashFlowModel.findOneAndUpdate(query, payload, {
+        new: true,
+      });
+      await session.commitTransaction();
+      await session.endSession();
+      return cashflow;
+    } catch (error) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw error;
+    }
   }
 
   async delete({ id, user_id }) {

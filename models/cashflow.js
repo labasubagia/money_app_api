@@ -30,6 +30,10 @@ const schema = new Schema(
       type: Date,
       default: new Date(),
     },
+    receipt_url: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: {

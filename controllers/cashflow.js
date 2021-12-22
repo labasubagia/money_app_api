@@ -1,5 +1,8 @@
 const { checkSchema } = require("express-validator");
 const ValidationHelper = require("../helpers/validation");
+const multer = require("multer");
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 class CashFlowController {
   constructor({ cashFlowService }) {
@@ -65,7 +68,11 @@ class CashFlowController {
   }
 
   create() {
-    return [this.createValidator(), this.createHandler()];
+    return [
+      upload.single("receipt"),
+      this.createValidator(),
+      this.createHandler(),
+    ];
   }
 
   createValidator() {
@@ -90,6 +97,7 @@ class CashFlowController {
           amount,
           note,
           date,
+          receipt: req?.file,
         });
         return res.status(201).json({ data, message: "Cash Flow created" });
       } catch (error) {
@@ -99,7 +107,11 @@ class CashFlowController {
   }
 
   update() {
-    return [this.updateValidator(), this.updateHandler()];
+    return [
+      upload.single("receipt"),
+      this.updateValidator(),
+      this.updateHandler(),
+    ];
   }
 
   updateValidator() {
@@ -126,6 +138,7 @@ class CashFlowController {
           amount,
           note,
           date,
+          receipt: req?.file,
         });
         return res.status(200).json({ data, message: "Cash Flow updated" });
       } catch (error) {
