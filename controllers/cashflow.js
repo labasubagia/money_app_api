@@ -2,11 +2,10 @@ const { checkSchema } = require("express-validator");
 const ValidationHelper = require("../helpers/validation");
 const multer = require("multer");
 
-const upload = multer({ storage: multer.memoryStorage() });
-
 class CashFlowController {
   constructor({ cashFlowService }) {
     this.cashFlowService = cashFlowService;
+    this.upload = multer({ storage: multer.memoryStorage() });
   }
 
   getSummary() {
@@ -40,8 +39,12 @@ class CashFlowController {
 
   getByUserHandler() {
     return async (req, res, next) => {
-      const userId = req?.user?._id;
-      const data = await this.cashFlowService.getByUser(userId);
+      const { start_date, end_date } = req.query;
+      const data = await this.cashFlowService.getByUser({
+        user_id: req?.user?._id,
+        start_date,
+        end_date,
+      });
       return res.json({ data });
     };
   }
@@ -69,7 +72,7 @@ class CashFlowController {
 
   create() {
     return [
-      upload.single("receipt"),
+      this.upload.single("receipt"),
       this.createValidator(),
       this.createHandler(),
     ];
@@ -108,7 +111,7 @@ class CashFlowController {
 
   update() {
     return [
-      upload.single("receipt"),
+      this.upload.single("receipt"),
       this.updateValidator(),
       this.updateHandler(),
     ];

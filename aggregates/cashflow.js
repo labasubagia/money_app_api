@@ -98,9 +98,21 @@ const CashFlowPipeline = {
     ];
   },
 
-  byUserWithCategory({ categoryModel, user_id }) {
+  byUserWithCategory({
+    categoryModel,
+    user_id,
+    start_date = moment().startOf("month"),
+    end_date = moment().endOf("month"),
+  }) {
+    const startDate = moment(start_date).startOf("day").toDate();
+    const endDate = moment(end_date).endOf("day").toDate();
     return [
-      { $match: { user_id: Types.ObjectId(user_id) } },
+      {
+        $match: {
+          user_id: Types.ObjectId(user_id),
+          date: { $gte: startDate, $lte: endDate },
+        },
+      },
       {
         $lookup: {
           from: categoryModel.collection.name,
