@@ -39,11 +39,12 @@ class CashFlowController {
 
   getByUserHandler() {
     return async (req, res, next) => {
-      const { start_date, end_date } = req.query;
+      const { start_date, end_date, category_id } = req.query;
       const data = await this.cashFlowService.getByUser({
         user_id: req?.user?._id,
         start_date,
         end_date,
+        category_id,
       });
       return res.json({ data });
     };

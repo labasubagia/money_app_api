@@ -1,6 +1,7 @@
 const moment = require("moment");
 const { Types } = require("mongoose");
 const CategoryConfig = require("../config/category");
+const _ = require("lodash");
 
 const CashFlowPipeline = {
   byUserSummary({
@@ -88,7 +89,7 @@ const CashFlowPipeline = {
             $sum: "$all_date_range.amount_value",
           },
           expense_date_range: {
-            $abs: { $sum: "$expense_date_range.amount_value" },
+            $sum: "$expense_date_range.amount_value",
           },
           income_date_range: {
             $sum: "$income_date_range.amount_value",
@@ -103,16 +104,21 @@ const CashFlowPipeline = {
     user_id,
     start_date = moment().startOf("month"),
     end_date = moment().endOf("month"),
+    category_id,
   }) {
     const startDate = moment(start_date).startOf("day").toDate();
     const endDate = moment(end_date).endOf("day").toDate();
-    return [
+    const categoryId = category_id ? Types.ObjectId(category_id) : undefined;
+    const query = _.omitBy(
       {
-        $match: {
-          user_id: Types.ObjectId(user_id),
-          date: { $gte: startDate, $lte: endDate },
-        },
+        user_id: Types.ObjectId(user_id),
+        date: { $gte: startDate, $lte: endDate },
+        category_id: categoryId,
       },
+      _.isUndefined
+    );
+    return [
+      { $match: query },
       {
         $lookup: {
           from: categoryModel.collection.name,
@@ -127,6 +133,13 @@ const CashFlowPipeline = {
           category_name: "$category.name",
           category_type: "$category.type",
           category: "$$REMOVE",
+          amount_value: {
+            $cond: [
+              { $eq: ["$category.type", CategoryConfig.INCOME] },
+              "$amount",
+              { $subtract: [0, "$amount"] },
+            ],
+          },
         },
       },
       { $sort: { date: -1, name: 1 } },

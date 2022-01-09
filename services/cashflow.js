@@ -22,12 +22,13 @@ class CashFlowService {
     return _.first(data);
   }
 
-  async getByUser({ user_id, start_date, end_date }) {
+  async getByUser({ user_id, start_date, end_date, category_id }) {
     const pipeline = CashFlowPipeline.byUserWithCategory({
       categoryModel: this.categoryModel,
       user_id,
       start_date,
       end_date,
+      category_id,
     });
     return this.cashFlowModel.aggregate(pipeline).allowDiskUse(true);
   }
