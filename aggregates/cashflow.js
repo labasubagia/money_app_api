@@ -145,6 +145,42 @@ const CashFlowPipeline = {
       { $sort: { date: -1, name: 1 } },
     ];
   },
+
+  byId({ categoryModel, user_id, id }) {
+    const query = _.omitBy(
+      {
+        user_id: Types.ObjectId(user_id),
+        _id: Types.ObjectId(id),
+      },
+      _.isUndefined
+    );
+    return [
+      { $match: query },
+      {
+        $lookup: {
+          from: categoryModel.collection.name,
+          localField: "category_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: { path: "$category" } },
+      {
+        $addFields: {
+          category_name: "$category.name",
+          category_type: "$category.type",
+          category: "$$REMOVE",
+          amount_value: {
+            $cond: [
+              { $eq: ["$category.type", CategoryConfig.INCOME] },
+              "$amount",
+              { $subtract: [0, "$amount"] },
+            ],
+          },
+        },
+      },
+    ];
+  },
 };
 
 module.exports = CashFlowPipeline;

@@ -34,11 +34,15 @@ class CashFlowService {
   }
 
   async getById({ id, user_id }) {
-    const query = {
-      _id: Types.ObjectId(id),
-      user_id: { $in: [Types.ObjectId(user_id), null] },
-    };
-    return this.cashFlowModel.findOne(query);
+    const pipeline = CashFlowPipeline.byId({
+      categoryModel: this.categoryModel,
+      user_id,
+      id,
+    });
+    const cashflow = await this.cashFlowModel
+      .aggregate(pipeline)
+      .allowDiskUse(true);
+    return cashflow.length > 0 ? cashflow[0] : null;
   }
 
   async create({ user_id, category_id, name, amount, note, date, receipt }) {
